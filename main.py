@@ -42,12 +42,14 @@ async def main() -> None:
     application.add_handler(CommandHandler("drive_to", drive_to))
 
     await application.initialize()
-    await application.start()
     await application.updater.start_polling()
+    await application.start()
 
     await testing()
 
+    await application.updater.stop()
     await application.stop()
+    await application.shutdown()
 
 
 if __name__ == "__main__":

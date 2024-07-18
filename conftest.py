@@ -48,10 +48,12 @@ async def bot_api() -> Application:
 
     # Setup
     await app.initialize()
-    await app.start()
     await app.updater.start_polling()
+    await app.start()
 
     yield app
 
     # Teardown
+    await app.updater.stop()
     await app.stop()
+    await app.shutdown()
