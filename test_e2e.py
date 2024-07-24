@@ -13,12 +13,12 @@ class User:
         async with self.client.conversation("@gedong_ride_share_bot", timeout=5) as conv:
             await conv.send_message("/drive_to")
             resp = await conv.get_response()
-            assert "Please share the Google Map URL Location. Example: " \
-                   "https://maps.app.goo.gl/UuEC3fpGAHV9a7K38" in resp.text
+            assert resp.text in "Please share the Google Map URL Location. Example: " \
+                   "https://maps.app.goo.gl/UuEC3fpGAHV9a7K38"
             await conv.send_message("https://maps.app.goo.gl/Tx15MVpNw6xuPuz77")
             resp = await conv.get_response()
-            assert "Received location: Hougang Mall " \
-                   "@1.372455,103.8938277" in resp.text
+            assert resp.text in "Received location: Hougang Mall " \
+                   "@1.372455,103.8938277"
 
     def send_drop_off_point_to_bot(self):
         pass

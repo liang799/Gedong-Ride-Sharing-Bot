@@ -3,13 +3,13 @@ import asyncio
 import pytest_asyncio
 import os
 
-from telegram.ext import ApplicationBuilder, Application, CommandHandler
+from telegram.ext import ApplicationBuilder, Application, CommandHandler, ConversationHandler, MessageHandler, filters
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 from dotenv import load_dotenv
 import logging
 
-from bot_cmds.driver_cmds import drive_to
+from bot_cmds.driver_cmds import drive_to, SELECTING_DRIVER_DESTINATION, selecting_driver_destination, cancel
 
 load_dotenv()
 
@@ -44,7 +44,14 @@ async def client() -> TelegramClient:
 @pytest_asyncio.fixture(scope="session")
 async def bot_api() -> Application:
     app = ApplicationBuilder().token(bot_api_token).build()
-    app.add_handler(CommandHandler("drive_to", drive_to))
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler("drive_to", drive_to)],
+        states={
+            SELECTING_DRIVER_DESTINATION: [MessageHandler(filters.TEXT, selecting_driver_destination)]
+        },
+        fallbacks=[CommandHandler('cancel', cancel)]
+    )
+    app.add_handler(conv_handler)
 
     # Setup
     await app.initialize()
