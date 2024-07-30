@@ -23,9 +23,18 @@ async def selecting_driver_destination(update: Update, context: ContextTypes.DEF
 
     location_name = re.sub("\+", " ", raw_location_name.group(1).strip())
 
-    lat_long = "todo"
+    pattern = r'@(-?\d+\.\d+),(-?\d+\.\d+)'
+    lat_long_match = re.search(pattern, r.url)
+
+    if lat_long_match is None:
+        await update.message.reply_text("Lat Long not found in URL")
+        return SELECTING_DRIVER_DESTINATION
+
+    latitude = lat_long_match.group(1)
+    longitude = lat_long_match.group(2)
+
     await update.message.reply_text(f"Received location: {location_name} "
-                                    f"{lat_long}")
+                                    f"@{latitude},{longitude}")
 
     return ConversationHandler.END
 
