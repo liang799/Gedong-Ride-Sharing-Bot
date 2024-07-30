@@ -1,7 +1,8 @@
 import re
 
 import requests as requests
-from telegram import Update, ReplyKeyboardRemove
+from telegram import Update, ReplyKeyboardRemove, InlineQueryResultsButton, WebAppInfo, KeyboardButton, \
+    ReplyKeyboardMarkup
 from telegram.ext import ContextTypes, ConversationHandler
 
 SELECTING_PASSENGER_DESTINATION = map(chr, range(2))
@@ -33,8 +34,13 @@ async def selecting_passenger_destination(update: Update, context: ContextTypes.
     latitude = lat_long_match.group(1)
     longitude = lat_long_match.group(2)
 
+    kb = [[
+        KeyboardButton("Click here to see list of potential drivers",
+                       web_app=WebAppInfo(f"https://example.com/passenger/@{latitude},{longitude}"))
+    ]]
     await update.message.reply_text(f"Received location: {location_name} "
-                                    f"@{latitude},{longitude}")
+                                    f"@{latitude},{longitude}",
+                                    reply_markup=ReplyKeyboardMarkup(kb))
 
     return ConversationHandler.END
 
