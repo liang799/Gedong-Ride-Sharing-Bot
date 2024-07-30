@@ -9,7 +9,8 @@ from telethon.sessions import StringSession
 from dotenv import load_dotenv
 import logging
 
-from bot_cmds.driver_cmds import drive_to, SELECTING_DRIVER_DESTINATION, selecting_driver_destination, cancel
+from bot_cmds.driver_cmds import *
+from bot_cmds.passenger_cmds import *
 
 load_dotenv()
 
@@ -45,9 +46,10 @@ async def client() -> TelegramClient:
 async def bot_api() -> Application:
     app = ApplicationBuilder().token(bot_api_token).build()
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("drive_to", drive_to)],
+        entry_points=[CommandHandler("drive_to", drive_to), CommandHandler("drop_off", drop_off)],
         states={
-            SELECTING_DRIVER_DESTINATION: [MessageHandler(filters.TEXT, selecting_driver_destination)]
+            SELECTING_DRIVER_DESTINATION: [MessageHandler(filters.TEXT, selecting_driver_destination)],
+            SELECTING_PASSENGER_DESTINATION: [MessageHandler(filters.TEXT, selecting_passenger_destination)]
         },
         fallbacks=[CommandHandler('cancel', cancel)]
     )

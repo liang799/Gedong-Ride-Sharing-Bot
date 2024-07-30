@@ -20,8 +20,16 @@ class User:
             assert resp.text in "Received location: Hougang Mall " \
                    "@1.372455,103.8938277"
 
-    def send_drop_off_point_to_bot(self):
-        pass
+    async def send_drop_off_point_to_bot(self):
+        async with self.client.conversation("@gedong_ride_share_bot", timeout=5) as conv:
+            await conv.send_message("/drop_off")
+            resp = await conv.get_response()
+            assert resp.text in "Please share the Google Map URL Location. Example: " \
+                                "https://maps.app.goo.gl/UuEC3fpGAHV9a7K38"
+            await conv.send_message("https://maps.app.goo.gl/Rd7ocD8Ao6FHbL597")
+            resp = await conv.get_response()
+            assert resp.text in "Received location: West Coast Park " \
+                                "@1.3140476,103.7416346"
 
 
 class TelegramBot:
@@ -49,7 +57,7 @@ async def test_no_match_because_passenger_drop_off_point_too_far(client: Telegra
     await driver.send_driving_destination_to_bot()
 
     passenger = User(client)
-    passenger.send_drop_off_point_to_bot()
+    await passenger.send_drop_off_point_to_bot()
     bot.should_show_waiting_ui_for_passenger()
 
     bot.decides_that_passenger_destination_is_too_far()
