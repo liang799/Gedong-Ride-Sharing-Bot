@@ -26,9 +26,9 @@ class TelegramBot:
         self.bot = bot
 
     def decides_that_passenger_destination_is_too_far(self):
-        if self.driver_lat_long.compare_distance_km(self.passenger_lat_long) > 5:
-            assert self.state == 'idle'
-            return
+        dist_km = self.driver_lat_long.compare_distance_km(self.passenger_lat_long)
+        assert dist_km > 5.0
+        assert self.state == 'idle'
 
     def should_not_inform_driver_about_potential_passenger(self):
         assert self.state == 'idle'
@@ -75,7 +75,7 @@ class User:
             resp = await conv.get_response()
             assert resp.text in "Received location: West Coast Park " \
                                 "@1.3140476,103.7416346"
-            bot.savePassenger(LatLong(1.372455, 103.8938277))
+            bot.savePassenger(LatLong(1.3140476, 103.7416346))
             bot.setBotState("idle")
 
 
