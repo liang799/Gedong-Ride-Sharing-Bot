@@ -36,6 +36,13 @@ async def selecting_driver_destination(update: Update, context: ContextTypes.DEF
     await update.message.reply_text(f"Received location: {location_name} "
                                     f"@{latitude},{longitude}")
 
+    """
+    TODO: Add code here to
+    1. Query list of drivers within range
+    2. If list not empty, notify these drivers
+    """
+
+
     return ConversationHandler.END
 
 
