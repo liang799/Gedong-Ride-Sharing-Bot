@@ -1,20 +1,10 @@
 import pytest
-from geopy import distance
 from telegram.ext import Application
 from telethon import TelegramClient
 
+from LatLong import LatLong
+
 pytest_plugins = 'pytest_asyncio'
-
-
-class LatLong:
-    def __init__(self, lat: float, long: float):
-        self.lat = lat
-        self.long = long
-
-    def compare_distance_km(self, other_lat_long: 'LatLong'):
-        coords_1 = (self.lat, self.long)
-        coords_2 = (other_lat_long.lat, other_lat_long.long)
-        return distance.geodesic(coords_1, coords_2).km
 
 
 class TelegramBot:
@@ -26,10 +16,6 @@ class TelegramBot:
     def decides_that_passenger_destination_is_too_far(self):
         dist_km = self.driver_lat_long.compare_distance_km(self.passenger_lat_long)
         assert dist_km > 5.0
-
-    def decides_that_passenger_destination_within_range(self):
-        dist_km = self.driver_lat_long.compare_distance_km(self.passenger_lat_long)
-        assert dist_km < 5.0
 
     def saveDriver(self, lat_long: LatLong):
         self.driver_lat_long = lat_long
@@ -97,10 +83,9 @@ async def test_no_match_because_passenger_drop_off_point_too_far(client: Telegra
 @pytest.mark.asyncio(scope="session")  # The asyncio event loop must not change after connection
 async def test_notifying_driver_of_potential_passenger(client: TelegramClient, bot_api: Application):
     bot = TelegramBot(bot_api)
-    driver = User(client)
-    await driver.send_driving_destination_to(bot)
 
     passenger = User(client)
     await passenger.send_near_drop_off_point_to(bot)
 
-    bot.decides_that_passenger_destination_within_range()
+    driver = User(client)
+    await driver.send_driving_destination_to(bot)   # todo: create a separate function that has assertion in it

@@ -48,7 +48,7 @@ async def bot_api() -> Application:
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("drive_to", drive_to), CommandHandler("drop_off", drop_off)],
         states={
-            SELECTING_DRIVER_DESTINATION: [MessageHandler(filters.TEXT, selecting_driver_destination)],
+            SELECTING_DRIVER_DESTINATION: [MessageHandler(filters.TEXT, create_selecting_driver_destination(None))],
             SELECTING_PASSENGER_DESTINATION: [MessageHandler(filters.TEXT, selecting_passenger_destination)]
         },
         fallbacks=[CommandHandler('cancel', cancel)]
