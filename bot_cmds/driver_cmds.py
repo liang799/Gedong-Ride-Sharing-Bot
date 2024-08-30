@@ -5,6 +5,7 @@ from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import ContextTypes, ConversationHandler
 
 from LatLong import LatLong
+from db.potentialpassenger import PotentialPassengerRepository
 
 SELECTING_DRIVER_DESTINATION = map(chr, range(1))
 
@@ -15,7 +16,7 @@ async def drive_to(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return SELECTING_DRIVER_DESTINATION
 
 
-def create_selecting_driver_destination(repository):
+def create_selecting_driver_destination(repository: PotentialPassengerRepository):
     async def selecting_driver_destination(update: Update, context: ContextTypes.DEFAULT_TYPE):
         location_url = update.message.text
         r = requests.get(location_url)
@@ -44,14 +45,13 @@ def create_selecting_driver_destination(repository):
         1. Query list of passengers within range
         2. If list not empty, notify these drivers
         """
-        # passengers = repository.getListOfPassengersWithin(LatLong(latitude, longitude))
-        passengers = []
+        passengers = repository.getListOfPassengersWithin(LatLong(latitude, longitude))
         if not passengers:
             return ConversationHandler.END
 
         newline = "\n"
         title = "List of existing users: \n"
-        text = title + newline.join(passengers)
+        text = title + newline.join(f"{idx}. {passenger.lat_long}" for idx, passenger in enumerate(passengers))
 
         await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
         return ConversationHandler.END
