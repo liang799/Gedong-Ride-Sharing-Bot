@@ -2,6 +2,7 @@ import re
 
 import requests as requests
 from telegram import Update, ReplyKeyboardRemove
+from telegram.constants import ParseMode
 from telegram.ext import ContextTypes, ConversationHandler
 
 from LatLong import LatLong
@@ -50,10 +51,13 @@ def create_selecting_driver_destination(repository: PotentialPassengerRepository
             return ConversationHandler.END
 
         newline = "\n"
-        title = "List of existing users: \n"
-        text = title + newline.join(f"{idx}. {passenger.lat_long}" for idx, passenger in enumerate(passengers))
+        title = "List of existing passengers that have similar destination as yours: \n"
+        text = title + newline.join(
+            f"{idx+1}. <a href='{passenger.location.url}'>{passenger.location.location_name}</a>"
+            for idx, passenger in enumerate(passengers)
+        )
 
-        await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
+        await context.bot.send_message(chat_id=update.effective_chat.id, text=text, parse_mode=ParseMode.HTML)
         return ConversationHandler.END
 
     return selecting_driver_destination

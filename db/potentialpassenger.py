@@ -2,12 +2,13 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from LatLong import LatLong
+from MapLocation import MapLocation
 
 
 class PotentialPassenger:
-    def __init__(self, tele_user_id: int, lat_long: LatLong):
+    def __init__(self, tele_user_id: int, location: MapLocation):
         self.telegram_user_id: int = tele_user_id
-        self.lat_long: LatLong = lat_long
+        self.location = location
 
 
 class PotentialPassengerRepository(ABC):

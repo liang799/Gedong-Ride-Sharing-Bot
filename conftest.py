@@ -31,7 +31,7 @@ class LocalPassengerRepo(PotentialPassengerRepository):
 
     def getListOfPassengersWithin(self, lat_long: LatLong) -> List[PotentialPassenger]:
         return list(filter(
-            lambda passenger: passenger.lat_long.compare_distance_km(lat_long) < 5,
+            lambda passenger: passenger.location.lat_long.compare_distance_km(lat_long) < 5,
             self.passengers
         ))
 

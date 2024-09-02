@@ -44,6 +44,20 @@ class User:
             assert resp.text in "Received location: Hougang Mall " \
                                 "@1.372455,103.8938277"
 
+    async def send_driving_destination_to_bot_and_received_notification(self):
+        async with self.client.conversation("@gedong_ride_share_bot", timeout=5) as conv:
+            await conv.send_message("/drive_to")
+            resp = await conv.get_response()
+            assert resp.text in "Please share the Google Map URL Location. Example: " \
+                                "https://maps.app.goo.gl/UuEC3fpGAHV9a7K38"
+            await conv.send_message("https://maps.app.goo.gl/Tx15MVpNw6xuPuz77")
+            resp = await conv.get_response()
+            assert resp.text in "Received location: Hougang Mall " \
+                                "@1.372455,103.8938277"
+            resp = await conv.get_response()
+            assert resp.text in "(List of existing passengers that have similar destination as yours: \n" \
+                                "1. [Hougang Mall](https://maps.app.goo.gl/Tx15MVpNw6xuPuz77))"
+
 
 @pytest.mark.asyncio(scope="session")  # The asyncio event loop must not change after connection
 async def test_no_match_because_passenger_drop_off_point_too_far(client: TelegramClient, bot_api: Application):
@@ -60,4 +74,4 @@ async def test_notifying_driver_of_potential_passenger(client: TelegramClient, b
     await passenger.send_near_drop_off_point_to_bot()
 
     driver = User(client)
-    await driver.send_driving_destination_to_bot()  # todo: create a separate function that has assertion in it
+    await driver.send_driving_destination_to_bot_and_received_notification()

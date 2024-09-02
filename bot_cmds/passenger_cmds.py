@@ -6,6 +6,7 @@ from telegram import Update, ReplyKeyboardRemove, InlineQueryResultsButton, WebA
 from telegram.ext import ContextTypes, ConversationHandler
 
 from LatLong import LatLong
+from MapLocation import MapLocation
 from db.potentialpassenger import PotentialPassengerRepository, PotentialPassenger
 
 SELECTING_PASSENGER_DESTINATION = map(chr, range(2))
@@ -46,7 +47,11 @@ def create_selecting_passenger_destination(repository: PotentialPassengerReposit
                                         f"@{latitude},{longitude}",
                                         reply_markup=ReplyKeyboardMarkup(kb))
 
-        repository.addPassenger(PotentialPassenger(update.message.from_user.id, LatLong(latitude, longitude)))
+        repository.addPassenger(
+            PotentialPassenger(
+                update.message.from_user.id,
+                MapLocation(location_url, location_name, LatLong(latitude, longitude))
+            ))
 
         return ConversationHandler.END
     return selecting_passenger_destination
