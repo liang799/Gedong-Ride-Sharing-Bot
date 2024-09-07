@@ -38,6 +38,9 @@ class LocalPassengerRepo(PotentialPassengerRepository):
     def addPassenger(self, passenger: PotentialPassenger):
         self.passengers.append(passenger)
 
+    def wipe_data(self):
+        self.passengers.clear()
+
 
 @pytest_asyncio.fixture(scope="session")
 async def client() -> TelegramClient:
@@ -79,6 +82,7 @@ async def bot_api() -> Application:
     yield app
 
     # Teardown
+    passRepo.wipe_data()
     await app.updater.stop()
     await app.stop()
     await app.shutdown()
