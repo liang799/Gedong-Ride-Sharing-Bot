@@ -26,7 +26,7 @@ def create_selecting_driver_destination(repository: PotentialPassengerRepository
         except Exception as e:
             exception_message = str(e)
             await update.message.reply_text(f"An error occurred: {exception_message}")
-            return SELECTING_DRIVER_DESTINATION
+            return ConversationHandler.END
 
         await update.message.reply_text(f"Received location: {location.location_name} "
                                         f"@{location.lat_long.lat},{location.lat_long.long}")
